@@ -1,8 +1,6 @@
 <?php
+    $link = mysqli_connect('localhost', 'root', '', 'image_upload');
     if (isset($_POST['btn'])){
-//        echo "<pre>";
-//        print_r($_POST);
-//        echo $_FILES['image_name']['tmp_name'];
         $fileName = $_FILES['image_name']['name'];
         $directory = 'images/';
         $imageUrl = $directory.$fileName;
@@ -19,6 +17,10 @@
                         die("Your image type is not supported. Plaese select jpg and png format.");
                     }else{
                         move_uploaded_file($_FILES['image_name']['tmp_name'],$imageUrl);
+                        $query = "INSERT INTO images(image_name) VALUES('$imageUrl')";
+                        mysqli_query($link, $query);
+                        echo "Image uploaded and saved successfully!!!";
+
                     }
                 }
             }
@@ -44,5 +46,17 @@
         <input type="submit" name="btn" value="Submit">
     </div>
 </form>
+<hr>
+<?php
+        $query = "SELECT * FROM images";
+        $queryResult = mysqli_query($link, $query);
+?>
+<table>
+    <tr>
+        <?php while( $image = mysqli_fetch_assoc($queryResult)){?>
+        <td><img src="<?php echo $image['image_name']?>" alt="Image" width="100px" height="100px"></td>
+        <?php } ?>
+    </tr>
+</table>
 </body>
 </html>
